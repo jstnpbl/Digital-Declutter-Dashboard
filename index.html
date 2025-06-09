@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Digital Declutter Dashboard - Manage your browser tabs and bookmarks">
+    <title>Digital Declutter Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Preload assets for better performance -->
+    <link rel="preload" href="app.js" as="script">
+    <!-- PWA related meta tags -->
+    <meta name="theme-color" content="#f8f9fa">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Digital Declutter Dashboard</h1>
+            <div class="theme-toggle">
+                <button id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" viewBox="0 0 24 24" width="24" height="24">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <nav class="tabs">
+            <button class="tab-btn active" data-target="tab-manager">Tab Manager</button>
+            <button class="tab-btn" data-target="bookmark-tracker">Bookmark Tracker</button>
+            <button class="tab-btn" data-target="reminders">Reminders</button>
+        </nav>
+
+        <section id="tab-manager" class="tab-content active">
+            <h2>Tab Manager</h2>
+            <div class="stats-badge">
+                <span id="tabTotalCount">0</span> tabs in <span id="tabCategoryCount">0</span> categories
+            </div>
+            
+            <form id="tabForm" class="input-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tabUrl">URL</label>
+                        <input type="url" id="tabUrl" placeholder="https://example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tabTitle">Title</label>
+                        <input type="text" id="tabTitle" placeholder="Website Title" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tabCategory">Category</label>
+                        <div class="category-input-group">
+                            <input type="text" id="tabCategory" list="tabCategories" placeholder="Work, Personal, Research..." required>
+                            <datalist id="tabCategories"></datalist>
+                        </div>
+                    </div>
+                    <div class="form-group form-actions">
+                        <button type="submit" class="btn btn-primary">Add Tab</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="dashboard">
+                <div id="tabsContainer" class="cards-container">
+                    <!-- Tab categories will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="bookmark-tracker" class="tab-content">
+            <h2>Bookmark Tracker</h2>
+            <div class="stats-badge">
+                <span id="bookmarkTotalCount">0</span> folders tracked
+            </div>
+            
+            <form id="bookmarkForm" class="input-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookmarkName">Folder Name</label>
+                        <input type="text" id="bookmarkName" placeholder="Work References" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookmarkCount">Item Count</label>
+                        <input type="number" id="bookmarkCount" min="0" placeholder="23" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookmarkDescription">Description (Optional)</label>
+                        <input type="text" id="bookmarkDescription" placeholder="Important work resources">
+                    </div>
+                    <div class="form-group form-actions">
+                        <button type="submit" class="btn btn-primary">Add Folder</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="dashboard">
+                <div id="bookmarksContainer" class="cards-container">
+                    <!-- Bookmark folders will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="reminders" class="tab-content">
+            <h2>Declutter Reminders</h2>
+            <div class="stats-badge">
+                <span id="reminderCount">0</span> items need attention
+            </div>
+            
+            <div class="dashboard">
+                <div id="remindersContainer" class="cards-container">
+                    <!-- Reminders will be populated here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-actions">
+                <button id="exportData" class="btn btn-outline">Export Data</button>
+                <label for="importData" class="btn btn-outline">Import Data</label>
+                <input type="file" id="importData" accept=".json" hidden>
+                <button id="clearData" class="btn btn-danger">Reset All Data</button>
+            </div>
+            <p>Digital Declutter Dashboard <span id="currentYear"></span> | Made with ❤️ | Offline Enabled</p>
+        </div>
+    </footer>
+
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <script src="app.js"></script>
+    <!-- Register service worker for PWA functionality -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed: ', err));
+            });
+        }
+    </script>
+</body>
+</html>
