@@ -38,7 +38,3 @@
 ## License
 
 See [LICENSE](LICENSE) for details.
-
----
-
-*Replace screenshot and repository links as needed.*
